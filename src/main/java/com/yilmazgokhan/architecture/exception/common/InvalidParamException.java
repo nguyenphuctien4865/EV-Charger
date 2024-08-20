@@ -19,4 +19,11 @@ public class InvalidParamException extends ArchitectureException {
         this.msg = INVALID_PARAM;
         this.status = HttpStatus.BAD_REQUEST;
     }
+
+    public InvalidParamException(String msg) {
+        super();
+        this.msg = msg;
+        this.code = INVALID_PARAM_CODE;
+        this.status = HttpStatus.BAD_REQUEST;
+    }
 }

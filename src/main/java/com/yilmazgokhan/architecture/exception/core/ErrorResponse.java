@@ -11,4 +11,8 @@ public class ErrorResponse extends Response {
         this.error_code = exception.getCode();
         this.msg = exception.getMsg();
     }
+
+    
+    
+    
 }

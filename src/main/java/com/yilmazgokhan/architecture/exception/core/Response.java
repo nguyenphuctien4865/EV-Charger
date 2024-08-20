@@ -3,6 +3,7 @@ package com.yilmazgokhan.architecture.exception.core;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -12,4 +13,6 @@ public class Response {
     protected int status;
     protected String error_code;
     protected String msg;
+    protected Date timestamp;
+    protected String details;
 }
