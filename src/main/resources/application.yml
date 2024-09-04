@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:base
+    driverClassName: org.h2.Driver
+    username: root
+    password:
+
+spring.jpa:
+  show-sql: true
+  hibernate:
+    ddl-auto: update
+  properties:
+    hibernate.format_sql: true
+
+spring.h2.console:
+  enabled: true
+  path: /h2-console
+  settings:
+    web-allow-others: true
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

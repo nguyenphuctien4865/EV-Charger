@@ -8,7 +8,7 @@
         <version>2.3.5.RELEASE</version>
         <relativePath/>
     </parent>
-    <groupId>com.yilmazgokhan</groupId>
+    <groupId>com.evcharger</groupId>
     <artifactId>architecture</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>architecture</name>
@@ -99,9 +99,8 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-            <version>2.0.1.Final</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
