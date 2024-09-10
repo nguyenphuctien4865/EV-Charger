@@ -2,37 +2,37 @@ package com.evcharger.architecture.entity;
 
 import java.time.LocalDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
-import com.evcharger.architecture.util.validator.Availability;
+import com.evcharger.architecture.util.enums.Availability;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "chargers")
+@Table(name = "ev_chargers")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class EVCharger {
 
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // private Long id;
     @Id
-    @Column(name = "charger_id", nullable = false, length = 50)
+    @Column(unique = true)
     private String chargerId;
 
-    @Column(name = "location_id", nullable = false, length = 50)
-    private String locationId;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "location_id", referencedColumnName = "id", nullable = false)
+    private Location location;
 
-    @Column(name = "power_output_id", nullable = false, length = 50)
-    private String powerOutputId;
+    @ManyToOne
+    @JoinColumn(name = "power_output_id", nullable = false)
+    private PowerOutput powerOutput;
 
-    @Column(name = "power_plug_type_id", nullable = false, length = 50)
-    private String powerPlugTypeId;
+    @ManyToOne
+    @JoinColumn(name = "power_plug_type_id", nullable = false)
+    private PowerPlugType powerPlugType;
 
     @Column(name = "number_of_ports", nullable = false)
     private Integer numberOfPorts;
@@ -50,4 +50,3 @@ public class EVCharger {
     // Getters and Setters
     // Constructors
 }
-

@@ -1,7 +1,7 @@
 package com.evcharger.architecture.controller;
 
 import com.evcharger.architecture.model.ApiResponse;
-import com.evcharger.architecture.model.PowerOutputModel;
+import com.evcharger.architecture.model.PowerOutputDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,25 +30,19 @@ public class PowerOutputController {
 
     // AC2: Read Power Output
     @GetMapping("/{id}")
-    public ResponseEntity<PowerOutputModel> getPowerOutputById(@PathVariable Long id) {
-        PowerOutputModel powerOutput = powerOutputService.getPowerOutputById(id);
-        if (powerOutput != null) {
-            return new ResponseEntity<>(powerOutput, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<PowerOutputDTO> getPowerOutputById(@PathVariable Long id) {
+        PowerOutputDTO powerOutput = powerOutputService.getPowerOutputById(id);
+        return powerOutput != null ? ResponseEntity.ok(powerOutput) : ResponseEntity.notFound().build();
     }
 
     // AC3: Update Power Output
     @PutMapping("/{id}")
-    public ResponseEntity<PowerOutputModel> updatePowerOutput(@PathVariable Long id,
-            @RequestBody PowerOutputModel powerOutput) {
-        PowerOutputModel updatedPowerOutput = powerOutputService.updatePowerOutput(id, powerOutput);
-        if (updatedPowerOutput != null) {
-            return new ResponseEntity<>(updatedPowerOutput, HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<?> updatePowerOutput(@PathVariable Long id,
+            @RequestBody PowerOutputDTO powerOutput) {
+        PowerOutputDTO updatedPowerOutput = powerOutputService.updatePowerOutput(id, powerOutput);
+        return updatedPowerOutput != null
+                ? ResponseEntity.ok(updatedPowerOutput)
+                : ResponseEntity.notFound().build();
     }
 
     // AC4: Delete Power Output
@@ -60,20 +54,21 @@ public class PowerOutputController {
 
     // AC5: List Power Outputs
     @GetMapping
-    public ResponseEntity<ApiResponse<PowerOutputModel>> listPowerOutputs(
+    public ResponseEntity<ApiResponse<PowerOutputDTO>> listPowerOutputs(
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
             @RequestParam(value = "sort", defaultValue = "id", required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir) {
 
-        ApiResponse<PowerOutputModel> powerOutputs = powerOutputService.listPowerOutputs(pageNo, pageSize, sortBy,sortDir);
+        ApiResponse<PowerOutputDTO> powerOutputs = powerOutputService.listPowerOutputs(pageNo, pageSize, sortBy,
+                sortDir);
         return ResponseEntity.ok(powerOutputs);
     }
 
     @PostMapping
-    public ResponseEntity<PowerOutputModel> createPowerOutput(@RequestBody @Valid PowerOutputModel powerOutputModel) {
+    public ResponseEntity<PowerOutputDTO> createPowerOutput(@RequestBody @Valid PowerOutputDTO powerOutputModel) {
         // TODO: process POST request
-        PowerOutputModel model = powerOutputService.createPowerOutput(powerOutputModel);
+        PowerOutputDTO model = powerOutputService.createPowerOutput(powerOutputModel);
         return new ResponseEntity<>(model, HttpStatus.CREATED);
     }
 

@@ -2,18 +2,18 @@ package com.evcharger.architecture.service;
 
 import com.evcharger.architecture.exception.common.InvalidParamException;
 import com.evcharger.architecture.model.ApiResponse;
-import com.evcharger.architecture.model.powerPlugType.PowerPlugTypeModel;
+import com.evcharger.architecture.model.PowerPlugTypeDTO;
 
 import java.util.List;
 
 public interface PowerPlugTypeService {
-    PowerPlugTypeModel createPowerPlugType(PowerPlugTypeModel plugType) throws InvalidParamException;
+    PowerPlugTypeDTO createPowerPlugType(PowerPlugTypeDTO plugType) throws InvalidParamException;
 
-    PowerPlugTypeModel getPowerPlugTypeById(Long id) throws InvalidParamException;
+    PowerPlugTypeDTO getPowerPlugTypeById(Long id) throws InvalidParamException;
 
-    PowerPlugTypeModel updatePowerPlugType(Long id, PowerPlugTypeModel updatedPlugType) throws InvalidParamException;
+    PowerPlugTypeDTO updatePowerPlugType(Long id, PowerPlugTypeDTO updatedPlugType) throws InvalidParamException;
 
     void deletePowerPlugType(Long id);
 
-    public ApiResponse<PowerPlugTypeModel> listPowerPlugTypes(int pageNo, int pageSize, String sortBy, String sortDir, String plugType);
+    public ApiResponse<PowerPlugTypeDTO> listPowerPlugTypes(int pageNo, int pageSize, String sortBy, String sortDir, String plugType);
 }

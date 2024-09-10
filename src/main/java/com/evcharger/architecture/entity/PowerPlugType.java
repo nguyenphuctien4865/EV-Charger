@@ -2,6 +2,9 @@ package com.evcharger.architecture.entity;
 
 import lombok.*;
 
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.*;
 
 @Getter
@@ -29,4 +32,11 @@ public class PowerPlugType {
 
     @Column(name = "additional_notes")
     private String additionalNotes;
+
+    @OneToMany(mappedBy = "powerPlugType")
+    private List<EVCharger> evChargers;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "power_plug_type_power_output", joinColumns = @JoinColumn(name = "power_plug_type_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "power_output_id", referencedColumnName = "id"))
+    private Set<PowerOutput> powerOutputs;
 }

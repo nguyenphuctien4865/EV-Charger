@@ -5,11 +5,10 @@ import java.time.LocalDate;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
-import com.evcharger.architecture.util.validator.Availability;
+import com.evcharger.architecture.util.enums.Availability;
 import com.evcharger.architecture.util.validator.EnumPattern;
 
 import lombok.AllArgsConstructor;
@@ -22,18 +21,20 @@ import org.springframework.format.annotation.DateTimeFormat;
 @NoArgsConstructor
 public class EVChargerDTO {
 
+//    private String id;
+
     @NotBlank(message = "Charger ID is mandatory")
     @Size(max = 50, message = "Charger ID must not exceed 50 characters")
     private String chargerId;
 
-    @NotBlank(message = "Location ID is mandatory")
-    private String locationId;
+    @NotNull(message = "Location is mandatory")
+    private LocationDTO location;
 
-    @NotBlank(message = "Power Output ID is mandatory")
-    private String powerOutputId;
+    @NotNull(message = "Power Output is mandatory")
+    private PowerOutputDTO powerOutput;
 
-    @NotBlank(message = "Power Plug Type ID is mandatory")
-    private String powerPlugTypeId;
+    @NotNull(message = "Power Plug Type is mandatory")
+    private PowerPlugTypeDTO powerPlugType;
 
     @NotNull(message = "Number of Ports is mandatory")
     @Positive(message = "Number of Ports must be a positive integer")

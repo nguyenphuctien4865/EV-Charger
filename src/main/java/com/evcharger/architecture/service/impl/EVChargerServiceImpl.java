@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,19 +12,21 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.evcharger.architecture.entity.EVCharger;
+import com.evcharger.architecture.entity.Location;
 import com.evcharger.architecture.entity.PowerOutput;
-import com.evcharger.architecture.exception.CustomExceptionHandler;
+import com.evcharger.architecture.entity.PowerPlugType;
 import com.evcharger.architecture.exception.common.ResourceNotFoundException;
 import com.evcharger.architecture.model.ApiResponse;
 import com.evcharger.architecture.model.EVChargerDTO;
-import com.evcharger.architecture.model.PowerOutputModel;
 import com.evcharger.architecture.repository.EVChargerRepository;
 import com.evcharger.architecture.repository.PowerOutputRepository;
+import com.evcharger.architecture.repository.PowerPlugTypeRepository;
 import com.evcharger.architecture.service.EVChargerService;
 import com.evcharger.architecture.specification.EVChargerSpecification;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -36,37 +36,55 @@ public class EVChargerServiceImpl implements EVChargerService {
     private EVChargerRepository evChargerRepository;
 
     @Autowired
-    private ModelMapper modelMapper;
+    private PowerPlugTypeRepository powerPlugTypeRepository;
 
+    @Autowired
+    private PowerOutputRepository powerOutputRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
+    
+    @Transactional
     @Override
     public EVChargerDTO createEVCharger(EVChargerDTO evChargerDTO) {
-        // TODO Auto-generated method stub
-        return mapToDto(evChargerRepository.save(mapToEntity(evChargerDTO)));
+        log.info("Creating EV Charger with availability: {}", evChargerDTO.getAvailability());
+        EVCharger evCharger = mapToEntity(evChargerDTO);
+        evCharger.setAvailability(evChargerDTO.getAvailability());
+        System.out.println("Creating EV Charger with availability:"+ evCharger.getAvailability());
+        System.out.println("Creating EV Charger with availability:"+ evCharger.getChargerId());
+
+        return mapToDto(evChargerRepository.save(evCharger));
     }
 
     @Override
     public EVChargerDTO getEVCharger(String id) {
         // TODO Auto-generated method stub
         EVCharger evCharger = evChargerRepository.findByChargerId(id)
-                .orElseThrow(() -> new ResourceNotFoundException("EV Charger", "Id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("EV Charger", "ChargerId", id));
 
         return mapToDto(evCharger);
     }
 
     @Override
     public EVChargerDTO updateEVCharger(String id, EVChargerDTO evChargerDTO) {
-        // TODO Auto-generated method stub
-
         EVCharger evCharger = evChargerRepository.findByChargerId(id)
                 .orElseThrow(() -> new ResourceNotFoundException("EV Charger", "Id", id));
 
         evCharger.setAvailability(evChargerDTO.getAvailability());
         evCharger.setInstallationDate(evChargerDTO.getInstallationDate());
         evCharger.setLastMaintenanceDate(evChargerDTO.getLastMaintenanceDate());
-        evCharger.setLocationId(evChargerDTO.getLocationId());
+        evCharger.setLocation(modelMapper.map(evChargerDTO.getLocation(), Location.class));
         evCharger.setNumberOfPorts(evChargerDTO.getNumberOfPorts());
-        evCharger.setPowerOutputId(evChargerDTO.getPowerOutputId());
-        evCharger.setPowerPlugTypeId(evChargerDTO.getPowerPlugTypeId());
+
+        PowerOutput powerOutput = powerOutputRepository.findById(evChargerDTO.getPowerOutput().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Power Output", "Id",
+                        evChargerDTO.getPowerOutput().getId()));
+        evCharger.setPowerOutput(powerOutput);
+
+        PowerPlugType powerPlugType = powerPlugTypeRepository.findById(evChargerDTO.getPowerPlugType().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Power Plug Type", "Id",
+                        evChargerDTO.getPowerPlugType().getId()));
+        evCharger.setPowerPlugType(powerPlugType);
 
         return mapToDto(evChargerRepository.save(evCharger));
     }
@@ -122,14 +140,10 @@ public class EVChargerServiceImpl implements EVChargerService {
     }
 
     private EVChargerDTO mapToDto(EVCharger evCharger) {
-
-        EVChargerDTO evChargerDTO = modelMapper.map(evCharger, EVChargerDTO.class);
-        return evChargerDTO;
+        return modelMapper.map(evCharger, EVChargerDTO.class);
     }
 
     private EVCharger mapToEntity(EVChargerDTO evChargerDTO) {
-
-        EVCharger evCharger = modelMapper.map(evChargerDTO, EVCharger.class);
-        return evCharger;
+        return modelMapper.map(evChargerDTO, EVCharger.class);
     }
 }

@@ -1,4 +1,4 @@
-package com.evcharger.architecture.model.powerPlugType;
+package com.evcharger.architecture.model;
 
 import lombok.*;
 
@@ -7,11 +7,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.evcharger.architecture.model.PowerOutputDTO;
+import java.util.Set;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PowerPlugTypeModel {
+public class PowerPlugTypeDTO {
 
     private Long id;
 
@@ -23,11 +26,15 @@ public class PowerPlugTypeModel {
     @Pattern(regexp = "^(Type 1|Type 2|CCS2|CHAdeMO|Tesla)$", message = "Plug Type must be one of the specified values.")
     private String plugType;
     
-    private String plugImage; // Store image URL or path
+    private String plugImage;
 
     @Size(max = 300)
     private String usedInRegions;
 
     @Size(max = 1000)
     private String additionalNotes;
+
+    private Set<PowerOutputDTO> powerOutputs;
+
+    // Remove evChargers field as it's typically not needed in DTO
 }

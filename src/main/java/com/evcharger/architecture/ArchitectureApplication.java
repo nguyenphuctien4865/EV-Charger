@@ -1,15 +1,22 @@
 package com.evcharger.architecture;
 
-import com.evcharger.architecture.entity.PowerOutput;
-import com.evcharger.architecture.entity.PowerPlugType;
+import com.evcharger.architecture.entity.Location;
+import com.evcharger.architecture.entity.OperatingHours;
+import com.evcharger.architecture.exception.common.InvalidParamException;
 import com.evcharger.architecture.model.EVChargerDTO;
-import com.evcharger.architecture.model.PowerOutputModel;
-import com.evcharger.architecture.repository.PowerPlugTypeRepository;
+import com.evcharger.architecture.model.LocationDTO;
+import com.evcharger.architecture.model.PowerOutputDTO;
+import com.evcharger.architecture.model.PowerPlugTypeDTO;
 import com.evcharger.architecture.service.EVChargerService;
+import com.evcharger.architecture.service.LocationService;
 import com.evcharger.architecture.service.PowerOutputService;
 import com.evcharger.architecture.service.PowerPlugTypeService;
-import com.evcharger.architecture.util.validator.Availability;
+import com.evcharger.architecture.util.enums.Availability;
+import com.evcharger.architecture.util.enums.ChargingSpeed;
 
+import lombok.extern.slf4j.Slf4j;
+
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -19,19 +26,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 import java.util.Date;
-import java.util.List; // Add this line to import the List class
 
+@Slf4j
 @EnableSwagger2
 @EnableScheduling
 @SpringBootApplication
 public class ArchitectureApplication {
-
-	@Bean
-	public ModelMapper modelMapper() {
-		return new ModelMapper();
-	}
 
 	@Autowired
 	private PowerOutputService powerOutputService;
@@ -39,142 +44,74 @@ public class ArchitectureApplication {
 	@Autowired
 	private EVChargerService evChargerService;
 
-	private PowerPlugType createDummyPowerPlugType1() {
-		PowerPlugType dummy = new PowerPlugType();
-		dummy.setId(1L);
-		dummy.setPowerModel("Model X120");
-		dummy.setPlugType("Type-C");
-		dummy.setPlugImage("https://example.com/images/plug-type-c.png");
-		dummy.setUsedInRegions("North America, Europe, Asia");
-		dummy.setAdditionalNotes("Commonly used in modern electronics, especially smartphones and laptops.");
-		return dummy;
-	}
+	@Autowired
+	private LocationService locationService;
 
-	private static PowerPlugType createDummyPowerPlugType2() {
-		PowerPlugType dummy = new PowerPlugType();
-		dummy.setId(2L);
-		dummy.setPowerModel("Model Y230");
-		dummy.setPlugType("Type-B");
-		dummy.setPlugImage("https://example.com/images/plug-type-b.png");
-		dummy.setUsedInRegions("South America, Africa");
-		dummy.setAdditionalNotes("Widely used in older devices, such as household appliances.");
-		return dummy;
-	}
+	@Autowired
+	private PowerPlugTypeService powerPlugTypeService;
 
-	private PowerPlugType createDummyPowerPlugType3() {
-		PowerPlugType dummy = new PowerPlugType();
-		dummy.setId(3L);
-		dummy.setPowerModel("Model Z450");
-		dummy.setPlugType("Type-A");
-		dummy.setPlugImage("https://example.com/images/plug-type-a.png");
-		dummy.setUsedInRegions("Japan, USA");
-		dummy.setAdditionalNotes("Type-A is used primarily in countries with a 120V power system.");
-		return dummy;
-	}
+	private void createPowerPlugTypeDummy() throws InvalidParamException {
+		List<PowerPlugTypeDTO> powerPlugTypes = List.of(
+				new PowerPlugTypeDTO(1L, "AC", "Type 1", "type1.png", "North America, Japan", "Common in older EVs",
+						null),
+				new PowerPlugTypeDTO(2L, "AC", "Type 2", "type2.png", "Europe, Australia", "Standard in Europe", null),
+				new PowerPlugTypeDTO(3L, "DC", "CCS2", "ccs2.png", "Europe, North America", "Combined Charging System",
+						null),
+				new PowerPlugTypeDTO(4L, "DC", "CHAdeMO", "chademo.png", "Japan, some European countries",
+						"Decreasing in popularity", null),
+				new PowerPlugTypeDTO(5L, "AC", "Tesla", "tesla.png", "North America", "Proprietary Tesla connector",
+						null));
 
-	private PowerPlugType createDummyPowerPlugType4() {
-		PowerPlugType dummy = new PowerPlugType();
-		dummy.setId(4L);
-		dummy.setPowerModel("Model W500");
-		dummy.setPlugType("Type-F");
-		dummy.setPlugImage("https://example.com/images/plug-type-f.png");
-		dummy.setUsedInRegions("Europe, Russia");
-		dummy.setAdditionalNotes("This plug is compatible with the European standard for household plugs.");
-		return dummy;
-	}
-
-	private PowerPlugType createDummyPowerPlugType5() {
-		PowerPlugType dummy = new PowerPlugType();
-		dummy.setId(5L);
-		dummy.setPowerModel("Model Q600");
-		dummy.setPlugType("Type-G");
-		dummy.setPlugImage("https://example.com/images/plug-type-g.png");
-		dummy.setUsedInRegions("UK, Ireland, Hong Kong");
-		dummy.setAdditionalNotes("Standard plug type used in the UK and other former British colonies.");
-		return dummy;
-	}
-
-	private void createPowerOutputDummy() {
-
-		PowerOutputModel validPowerOutput1 = new PowerOutputModel(
-				1L,
-				100.0,
-				"Slow",
-				220,
-				"Standard slow charging option for small electric vehicles.");
-
-		PowerOutputModel validPowerOutput2 = new PowerOutputModel(
-				2L,
-				150.0,
-				"Fast",
-				230,
-				"Fast charging station suitable for medium-sized electric cars.");
-
-		PowerOutputModel validPowerOutput3 = new PowerOutputModel(
-				3L,
-				200.0,
-				"Ultra-Fast",
-				400,
-				"Ultra-fast charging for large vehicles with high-capacity batteries.");
-
-		// Edge Case Examples
-		PowerOutputModel edgeCasePowerOutput1 = new PowerOutputModel(
-				4L,
-				0.01, // Minimum positive value
-				"Fast",
-				110, // Lower voltage limit
-				null // Null description (valid)
-		);
-
-		PowerOutputModel edgeCasePowerOutput2 = new PowerOutputModel(
-				5L,
-				999.99, // Upper bound for a plausible output value
-				"Ultra-Fast",
-				500, // Higher voltage value
-				"Ultra-fast charging station with the highest efficiency.");
-
-		List<PowerOutputModel> powerPlugTypeModelList = List.of(validPowerOutput1, validPowerOutput2, validPowerOutput3,
-				edgeCasePowerOutput1, edgeCasePowerOutput2);
-		for (PowerOutputModel powerOutputModel : powerPlugTypeModelList) {
-			powerOutputService.createPowerOutput(powerOutputModel);
+		for (PowerPlugTypeDTO dto : powerPlugTypes) {
+			powerPlugTypeService.createPowerPlugType(dto);
 		}
 	}
 
-	private void createEVChargerDummy() {
-		EVChargerDTO charger1 = new EVChargerDTO(
-				"CHG-001",
-				"LOC-001",
-				"PO-001",
-				"PPT-001",
-				4,
-				Availability.AVAILABLE,
-				LocalDate.of(2020, 1, 15),
-				LocalDate.of(2021, 6, 10));
+	private void createPowerOutputDummy() {
+		List<PowerOutputDTO> powerOutputs = List.of(
+				new PowerOutputDTO(1L, 7.4, ChargingSpeed.SLOW, 230, "Standard home charging"),
+				new PowerOutputDTO(2L, 22.0, ChargingSpeed.FAST, 400, "Three-phase AC charging"),
+				new PowerOutputDTO(3L, 50.0, ChargingSpeed.FAST, 400, "DC fast charging"),
+				new PowerOutputDTO(4L, 150.0, ChargingSpeed.ULTRA_FAST, 800, "Ultra-fast DC charging"),
+				new PowerOutputDTO(5L, 350.0, ChargingSpeed.ULTRA_FAST, 800, "Highest power DC charging"));
 
-		EVChargerDTO charger2 = new EVChargerDTO(
-				"CHG-002",
-				"LOC-002",
-				"PO-002",
-				"PPT-002",
-				2,
-				Availability.IN_USE,
-				LocalDate.of(2019, 3, 20),
-				LocalDate.of(2021, 5, 5));
+		for (PowerOutputDTO dto : powerOutputs) {
+			powerOutputService.createPowerOutput(dto);
+		}
+	}
 
-		EVChargerDTO charger3 = new EVChargerDTO(
-				"CHG-003",
-				"LOC-003",
-				"PO-003",
-				"PPT-003",
-				6,
-				Availability.OUT_OF_ORDER,
-				LocalDate.of(2018, 7, 25),
-				LocalDate.of(2021, 4, 15));
+	private void createLocationDummy() {
+		List<LocationDTO> locations = List.of(
+				new LocationDTO(1L, "Central Station", "123 Main St", "Downtown", "Metropolis", "USA", "12345", 40.7128,
+						-74.0060,
+						List.of(new OperatingHours(DayOfWeek.MONDAY, LocalTime.of(0, 0), LocalTime.of(23, 59))),
+						"Free for first hour", "+1234567890", "Ground Floor"),
+				new LocationDTO(2L, "Shopping Mall", "456 High St", "Uptown", "Megacity", "Canada", "M5V 2T6", 43.6532,
+						-79.3832,
+						List.of(new OperatingHours(DayOfWeek.MONDAY, LocalTime.of(9, 0), LocalTime.of(21, 0))),
+						"$2/hour", "+9876543210", "P2"));
 
-		List<EVChargerDTO> listEVCharger = List.of(charger1, charger2, charger3);
+		for (LocationDTO dto : locations) {
+			locationService.createLocation(dto);
+		}
+	}
 
-		for (EVChargerDTO powerOutputModel : listEVCharger) {
-			evChargerService.createEVCharger(powerOutputModel);
+	private void createEVChargerDummy() throws InvalidParamException {
+		LocationDTO location1 = locationService.getLocationById(1L);
+		LocationDTO location2 = locationService.getLocationById(2L);
+		PowerOutputDTO powerOutput1 = powerOutputService.getPowerOutputById(1L);
+		PowerOutputDTO powerOutput2 = powerOutputService.getPowerOutputById(3L);
+		PowerPlugTypeDTO plugType1 = powerPlugTypeService.getPowerPlugTypeById(1L);
+		PowerPlugTypeDTO plugType2 = powerPlugTypeService.getPowerPlugTypeById(3L);
+
+		List<EVChargerDTO> chargers = List.of(
+				new EVChargerDTO("CHG001", location1, powerOutput1, plugType1, 2, Availability.AVAILABLE,
+						LocalDate.of(2022, 1, 1), LocalDate.of(2023, 6, 1)),
+				new EVChargerDTO("CHG002", location2, powerOutput2, plugType2, 4, Availability.IN_USE,
+						LocalDate.of(2021, 7, 15), LocalDate.of(2023, 5, 30)));
+
+		for (EVChargerDTO dto : chargers) {
+			evChargerService.createEVCharger(dto);
 		}
 	}
 
@@ -184,18 +121,11 @@ public class ArchitectureApplication {
 	}
 
 	@Bean
-	CommandLineRunner init(PowerPlugTypeRepository powerPlugTypeRepository) {
+	CommandLineRunner init() {
 		return args -> {
-			PowerPlugType testPlugType1 = createDummyPowerPlugType1();
-			PowerPlugType testPlugType2 = createDummyPowerPlugType2();
-			PowerPlugType testPlugType3 = createDummyPowerPlugType3();
-			PowerPlugType testPlugType4 = createDummyPowerPlugType4();
-			PowerPlugType testPlugType5 = createDummyPowerPlugType5();
-			List<PowerPlugType> powerPlugTypeModelList = List.of(testPlugType1, testPlugType2, testPlugType3,
-					testPlugType4, testPlugType5);
-			powerPlugTypeRepository.saveAll(powerPlugTypeModelList);
-
+			createPowerPlugTypeDummy();
 			createPowerOutputDummy();
+			createLocationDummy();
 			createEVChargerDummy();
 		};
 	}
