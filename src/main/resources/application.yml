@@ -4,6 +4,8 @@ spring:
     driverClassName: org.h2.Driver
     username: root
     password:
+  config:
+    import: optional:file:.env[.properties]
 
 spring.jpa:
   show-sql: true
@@ -18,10 +20,26 @@ spring.h2.console:
   settings:
     web-allow-others: true
 
+spring.elasticsearch:
+  rest:
+    uris: ${ELASTICSEARCH_URI}
+    username: ${ELASTICSEARCH_USERNAME}
+    password: ${ELASTICSEARCH_PASSWORD}
+    connection-timeout: 10s
+    read-timeout: 60s
+
 server:
-  port: 8080
+  port: ${PORT}
 
 logging:
   level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    "[org.hibernate.SQL]": DEBUG
+    "[org.hibernate.type.descriptor.sql.BasicBinder]": TRACE
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+

@@ -23,9 +23,9 @@ import lombok.NoArgsConstructor;
 @Data
 @Table(name = "users_ev")
 public class UserEV {
-    
+
     @Id
-    @Column(name = "user_id",nullable = false, unique = true, length = 50)
+    @Column(name = "javax", nullable = false, unique = true, length = 50)
     private String userId;
 
     @Column(nullable = false, unique = true, length = 50)

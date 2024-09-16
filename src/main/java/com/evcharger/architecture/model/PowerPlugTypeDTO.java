@@ -25,7 +25,7 @@ public class PowerPlugTypeDTO {
     @NotBlank(message = "Plug Type is mandatory.")
     @Pattern(regexp = "^(Type 1|Type 2|CCS2|CHAdeMO|Tesla)$", message = "Plug Type must be one of the specified values.")
     private String plugType;
-    
+
     private String plugImage;
 
     @Size(max = 300)

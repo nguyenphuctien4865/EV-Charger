@@ -31,7 +31,7 @@ public class PowerOutputDTO {
 
     @Size(max = 1000, message = "Description can have a maximum of 1000 characters")
     private String description;
-    
+
     // Constructor without id for creating new power outputs
     public PowerOutputDTO(Double outputValue, ChargingSpeed chargingSpeed, Integer voltage, String description) {
         this.outputValue = outputValue;

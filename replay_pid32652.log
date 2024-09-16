@@ -4379,7 +4379,7 @@ instanceKlass java/time/InstantSource
 instanceKlass java/util/logging/LogRecord
 instanceKlass org/apache/aries/spifly/ProviderServiceFactory
 instanceKlass ch/qos/logback/classic/servlet/LogbackServletContainerInitializer
-instanceKlass jakarta/servlet/ServletContainerInitializer
+instanceKlass javax/servlet/ServletContainerInitializer
 instanceKlass org/eclipse/osgi/internal/framework/EquinoxBundle$1
 instanceKlass org/apache/aries/spifly/ProviderBundleTrackerCustomizer$ServiceDetails
 instanceKlass org/eclipse/osgi/storage/bundlefile/ZipBundleFile$1

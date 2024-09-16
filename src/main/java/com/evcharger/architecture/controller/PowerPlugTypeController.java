@@ -1,6 +1,5 @@
 package com.evcharger.architecture.controller;
 
-
 import com.evcharger.architecture.exception.common.InvalidParamException;
 import com.evcharger.architecture.model.ApiResponse;
 import com.evcharger.architecture.model.PowerPlugTypeDTO;
@@ -59,8 +58,9 @@ public class PowerPlugTypeController {
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
             @RequestParam(value = "sort", defaultValue = "id", required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir) {
-                
-        ApiResponse<PowerPlugTypeDTO> plugTypes = service.listPowerPlugTypes(pageNo, pageSize, sortBy, sortDir, plugType);
+
+        ApiResponse<PowerPlugTypeDTO> plugTypes = service.listPowerPlugTypes(pageNo, pageSize, sortBy, sortDir,
+                plugType);
         return new ResponseEntity<>(plugTypes, HttpStatus.OK);
     }
 }

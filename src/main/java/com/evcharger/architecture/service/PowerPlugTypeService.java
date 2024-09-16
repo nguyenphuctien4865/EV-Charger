@@ -4,7 +4,6 @@ import com.evcharger.architecture.exception.common.InvalidParamException;
 import com.evcharger.architecture.model.ApiResponse;
 import com.evcharger.architecture.model.PowerPlugTypeDTO;
 
-import java.util.List;
 
 public interface PowerPlugTypeService {
     PowerPlugTypeDTO createPowerPlugType(PowerPlugTypeDTO plugType) throws InvalidParamException;

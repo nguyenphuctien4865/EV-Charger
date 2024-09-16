@@ -16,15 +16,13 @@ import com.evcharger.architecture.util.enums.ChargingSpeed;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.modelmapper.Conditions;
-import org.modelmapper.ModelMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -33,7 +31,6 @@ import java.util.List;
 import java.util.Date;
 
 @Slf4j
-@EnableSwagger2
 @EnableScheduling
 @SpringBootApplication
 public class ArchitectureApplication {

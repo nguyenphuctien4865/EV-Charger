@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class UserEVDTO {
-    
+
     @NotBlank
     @Size(max = 50)
     private String userId;

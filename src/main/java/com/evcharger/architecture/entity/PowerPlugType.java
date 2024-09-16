@@ -1,11 +1,10 @@
 package com.evcharger.architecture.entity;
 
+import javax.persistence.*;
 import lombok.*;
 
 import java.util.List;
 import java.util.Set;
-
-import javax.persistence.*;
 
 @Getter
 @Setter

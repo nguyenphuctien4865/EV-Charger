@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class OperatingHours {
 
-   @NotNull(message = "Day of week is required")
+    @NotNull(message = "Day of week is required")
     private DayOfWeek dayOfWeek;
 
     @NotNull(message = "Opening time is required")
@@ -30,7 +30,8 @@ public class OperatingHours {
 
     @AssertTrue(message = "Open time must be before close time")
     public boolean isValidOperatingHours() {
-        return (openTime != null && closeTime != null && openTime.isBefore(closeTime)) || (openTime == null && closeTime == null);
+        return (openTime != null && closeTime != null && openTime.isBefore(closeTime))
+                || (openTime == null && closeTime == null);
     }
 
     // Utility method to check if a specific time is within open hours
