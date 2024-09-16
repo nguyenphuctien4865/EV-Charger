@@ -33,3 +33,4 @@ build/
 .vscode/
 *.yml
 *.env
+!.example.env
