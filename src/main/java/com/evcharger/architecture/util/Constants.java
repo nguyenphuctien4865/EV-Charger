@@ -2,6 +2,9 @@ package com.evcharger.architecture.util;
 
 public class Constants {
 
+    public static final String JWT_SECRET_KEY = "JWT_SECRET";
+    public static final String JWT_SECRET_DEFAULT_VALUE = "jxgEQeXHuPq8VdbyYFNkANdudQ53YUn4";
+    public static final String JWT_HEADER = "Authorization";
     public static final String API_VERSION = "/v1";
     public static final String BASE_URL = "/architecture_api" + API_VERSION;
 

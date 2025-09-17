@@ -1,12 +1,17 @@
 package com.evcharger.architecture.entity;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -14,6 +19,7 @@ import javax.persistence.Temporal;
 import javax.validation.constraints.Email;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,10 +28,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Table(name = "users_ev")
+@Builder
 public class UserEV {
 
     @Id
-    @Column(name = "javax", nullable = false, unique = true, length = 50)
+    @Column(name = "userId", nullable = false, unique = true, length = 50)
     private String userId;
 
     @Column(nullable = false, unique = true, length = 50)
@@ -49,6 +56,14 @@ public class UserEV {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @Column
+    @ManyToMany
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @Builder.Default
+    private Set<Role> roles = new HashSet<>();
 
     @PrePersist
     public void onPrePersist() {

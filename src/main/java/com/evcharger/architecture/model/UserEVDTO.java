@@ -1,6 +1,7 @@
 package com.evcharger.architecture.model;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -34,4 +35,6 @@ public class UserEVDTO {
     private String phoneNumber;
 
     private List<String> favorites;
+
+    protected Set<RoleDTO> Roles;
 }

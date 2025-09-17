@@ -2,21 +2,28 @@ package com.evcharger.architecture;
 
 import com.evcharger.architecture.entity.Location;
 import com.evcharger.architecture.entity.OperatingHours;
+import com.evcharger.architecture.entity.Role;
+import com.evcharger.architecture.entity.UserEV;
 import com.evcharger.architecture.exception.common.InvalidParamException;
 import com.evcharger.architecture.model.EVChargerDTO;
 import com.evcharger.architecture.model.LocationDTO;
 import com.evcharger.architecture.model.PowerOutputDTO;
 import com.evcharger.architecture.model.PowerPlugTypeDTO;
+import com.evcharger.architecture.repository.UserEVRepository;
 import com.evcharger.architecture.service.EVChargerService;
 import com.evcharger.architecture.service.LocationService;
 import com.evcharger.architecture.service.PowerOutputService;
 import com.evcharger.architecture.service.PowerPlugTypeService;
+import com.evcharger.architecture.service.RoleService;
+import com.evcharger.architecture.service.UserEVService;
+import com.evcharger.architecture.service.UserService;
 import com.evcharger.architecture.util.enums.Availability;
 import com.evcharger.architecture.util.enums.ChargingSpeed;
+import com.evcharger.architecture.util.enums.ERole;
 
 import lombok.extern.slf4j.Slf4j;
 
-
+import org.elasticsearch.client.Node.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -29,6 +36,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Date;
+import java.util.Set;
 
 @Slf4j
 @EnableScheduling
@@ -46,6 +54,12 @@ public class ArchitectureApplication {
 
 	@Autowired
 	private PowerPlugTypeService powerPlugTypeService;
+
+	@Autowired
+	private RoleService roleService;
+
+	@Autowired
+	private UserEVRepository userEVRepository;
 
 	private void createPowerPlugTypeDummy() throws InvalidParamException {
 		List<PowerPlugTypeDTO> powerPlugTypes = List.of(
@@ -112,6 +126,40 @@ public class ArchitectureApplication {
 		}
 	}
 
+	private void createRolesDummy() {
+		List<String> roleNames = List.of(ERole.ROLE_USER.toString(), ERole.ROLE_ADMIN.toString());
+
+		for (String role : roleNames) {
+			roleService.saveRole(role);
+		}
+	}
+
+	private void createUsersDummy() {
+		Role roles = roleService.getRoleByName(ERole.ROLE_USER.toString());
+		List<UserEV> users = List.of(
+				UserEV.builder()
+						.userId("user1")
+						.username("User One")
+						.email("user1@example.com")
+						.password("password1")
+						.phoneNumber("1234567890")
+						.roles(Set.of(roles)) // Assuming ROLE_USER exists
+						.build(),
+				UserEV.builder()
+						.userId("user2")
+						.username("User Two")
+						.email("user2@example.com")
+						.password("password2")
+						.phoneNumber("0987654321")
+						.roles(Set.of(roles)) // Assuming ROLE_ADMIN exists
+						.build());
+
+		for (UserEV user : users) {
+			// Assuming you have a userService to save UserEV
+			userEVRepository.save(user); // Replace with actual user saving method
+		}
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(ArchitectureApplication.class, args);
 		System.out.println(new Date(System.currentTimeMillis()));
@@ -124,6 +172,8 @@ public class ArchitectureApplication {
 			createPowerOutputDummy();
 			createLocationDummy();
 			createEVChargerDummy();
+			createRolesDummy();
+			createUsersDummy();
 		};
 	}
 

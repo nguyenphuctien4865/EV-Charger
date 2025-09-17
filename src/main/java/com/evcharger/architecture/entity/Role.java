@@ -7,25 +7,30 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import java.util.HashSet;
+import java.util.Set;
+
+@Table
 @Entity
-@Table(name = "users")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User  {
+public class Role {
 
     @Id
-    @Column(name = "userId", nullable = false, unique = true)
-    private String userId;
+    @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "name")
+    @Column
     private String name;
 
-    @Column(name = "username")
-    private String username;
+    @ManyToMany(mappedBy = "roles")
+    private Set<UserEV> userList = new HashSet<>();
 
 }
